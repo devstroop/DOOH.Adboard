@@ -88,6 +88,7 @@ setup_services() {
 Description=DOOH Adboard Service
 [Service]
 Environment="DISPLAY=:0"
+ExecStartPre=/bin/sleep 10
 ExecStart=/bin/bash /home/admin/start_dooh_adboard.sh
 Restart=always
 [Install]
