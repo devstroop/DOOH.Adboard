@@ -71,7 +71,7 @@ setup_services() {
 [Unit]
 Description=DOOH Adboard Service
 [Service]
-ExecStart=/usr/bin/dotnet /home/admin/DOOH.Adboard/net8.0/DOOH.Adboard.dll
+ExecStart=dotnet /home/admin/DOOH.Adboard/net8.0/DOOH.Adboard.dll
 Restart=always
 [Install]
 WantedBy=multi-user.target
