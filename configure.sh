@@ -64,6 +64,21 @@ pull_repository() {
     git config pull.rebase true
 }
 
+# Function to create the start script
+create_start_script() {
+    cat <<EOF | sudo tee /home/admin/start_dooh_adboard.sh > /dev/null
+#!/bin/bash
+# Navigate to the application directory
+cd /home/admin/DOOH.Adboard
+# Add the directory to Git's safe directories
+git config --global --add safe.directory /home/admin/DOOH.Adboard
+# Pull the latest code from the repository
+git pull
+# Start the .NET application
+/home/admin/.dotnet/dotnet /home/admin/DOOH.Adboard/net8.0/DOOH.Adboard.dll
+EOF
+    sudo chmod +x /home/admin/start_dooh_adboard.sh
+}
 
 # Function to set up services
 setup_services() {
@@ -73,12 +88,12 @@ setup_services() {
 Description=DOOH Adboard Service
 [Service]
 Environment="DISPLAY=:0"
-ExecStart=/bin/bash -c 'cd /home/admin/DOOH.Adboard && git pull; /home/admin/.dotnet/dotnet /home/admin/DOOH.Adboard/net8.0/DOOH.Adboard.dll'
+ExecStart=/bin/bash /home/admin/start_dooh_adboard.sh
 Restart=always
 [Install]
 WantedBy=multi-user.target
 EOF
-    sudo chmod +x /etc/systemd/system/dooh.adboard.service
+    sudo systemctl daemon-reload
     sudo systemctl enable "dooh.adboard.service"
     sudo systemctl start "dooh.adboard.service"
 }
@@ -89,6 +104,7 @@ install_dotnet
 install_debugger
 configure_system
 pull_repository
+create_start_script
 setup_services
 
 # Final message
