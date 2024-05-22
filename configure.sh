@@ -71,6 +71,7 @@ setup_services() {
 [Unit]
 Description=DOOH Adboard Service
 [Service]
+Environment="DISPLAY=:0"
 ExecStart=/home/admin/.dotnet/dotnet /home/admin/DOOH.Adboard/net8.0/DOOH.Adboard.dll
 Restart=always
 [Install]
