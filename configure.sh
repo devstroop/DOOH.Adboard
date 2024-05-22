@@ -61,6 +61,7 @@ configure_system() {
 pull_repository() {
     display_message "Pulling repository..."
     git clone https://github.com/devstroop/DOOH.Adboard.git ~/DOOH.Adboard
+    git config pull.rebase true
 }
 
 
@@ -72,7 +73,7 @@ setup_services() {
 Description=DOOH Adboard Service
 [Service]
 Environment="DISPLAY=:0"
-ExecStart=/home/admin/.dotnet/dotnet /home/admin/DOOH.Adboard/net8.0/DOOH.Adboard.dll
+ExecStart=/bin/bash -c 'cd /home/admin/DOOH.Adboard && git pull; /home/admin/.dotnet/dotnet /home/admin/DOOH.Adboard/net8.0/DOOH.Adboard.dll'
 Restart=always
 [Install]
 WantedBy=multi-user.target
