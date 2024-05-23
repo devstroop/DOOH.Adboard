@@ -15,9 +15,10 @@ git config --global --add safe.directory /home/admin/DOOH.Adboard
 display_message "Checking for updates..."
 
 # Check for updates
-if git fetch --dry-run 2>/dev/null | grep -q 'origin'; then
-    display_message "Updates available. Pulling changes..."
-    if git pull; then
+if git fetch 2>/dev/null | grep -q 'origin'; then
+    display_message "Updates available. Applying changes..."
+    # Pull updates from the remote repository
+    if git pull --rebase; then
         display_message "Repository updated successfully."
     else
         display_message "Failed to pull updates."
