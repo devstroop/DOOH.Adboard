@@ -18,7 +18,7 @@ display_message "Checking for updates..."
 if git fetch 2>/dev/null | grep -q 'origin'; then
     display_message "Updates available. Applying changes..."
     # Pull updates from the remote repository
-    if git pull --rebase; then
+    if git stash && git pull --rebase; then
         display_message "Repository updated successfully."
     else
         display_message "Failed to pull updates."
