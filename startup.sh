@@ -19,6 +19,7 @@ if [[ $(git rev-list HEAD...origin/main --count) -gt 0 ]]; then
     display_message "Updates available! Applying changes..."
     # Pull updates from the remote repository
     if git stash && git pull --rebase; then
+        sudo chmod +x /home/admin/DOOH.Adboard/startup.sh
         display_message "Updated successfully!"
     else
         display_message "Failed to update!"
