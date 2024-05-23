@@ -32,13 +32,13 @@ install_debugger() {
 configure_system() {
     display_message "Configuring system..."
     sudo usermod -a -G input $USER
-    sudo raspi-config nonint do_boot_behaviour B2
+    sudo raspi-config nonint do_boot_behaviour B1
     sudo timedatectl set-timezone "Asia/Kolkata"
     sudo raspi-config nonint do_memory_split 64
     sudo raspi-config nonint do_boot_splash 0
     sudo raspi-config nonint do_overscan 1
     sudo raspi-config nonint do_camera 0
-    
+
     echo 'export XDG_RUNTIME_DIR=/tmp/.dotnet' >> ~/.bashrc
     source ~/.bashrc
 }
