@@ -16,12 +16,12 @@ display_message "Checking for updates..."
 
 # Check for updates
 if [[ $(git rev-list HEAD...origin/main --count) -gt 0 ]]; then
-    display_message "Updates available. Applying changes..."
+    display_message "Adboard sdk updates available. Applying changes..."
     # Pull updates from the remote repository
     if git stash && git pull --rebase; then
-        display_message "Repository updated successfully."
+        display_message "Adboard Sdk updated successfully."
     else
-        display_message "Failed to pull updates."
+        display_message "Failed to update."
     fi
 else
     display_message "No updates available!"
