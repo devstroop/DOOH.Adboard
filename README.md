@@ -13,3 +13,5 @@ sudo apt-get update && sudo apt-get upgrade -y
 ```
 curl -sSL https://raw.githubusercontent.com/devstroop/DOOH.Adboard/master/configure.sh | sh
 ```
+## References
+Powered by Devstroop Technologies
