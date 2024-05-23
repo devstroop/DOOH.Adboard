@@ -51,7 +51,7 @@ configure_system() {
     sudo usermod -a -G input $USER
     sudo raspi-config nonint do_boot_behaviour B2
     sudo timedatectl set-timezone "Asia/Kolkata"
-    sudo raspi-config nonint do_memory_split 128
+    sudo raspi-config nonint do_memory_split 64
     sudo raspi-config nonint do_boot_splash 0
     sudo raspi-config nonint do_overscan 1
     sudo raspi-config nonint do_camera 0
