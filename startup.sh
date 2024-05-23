@@ -24,7 +24,7 @@ if git fetch --quiet --dry-run 2>/dev/null | grep -q 'origin'; then
         display_message "Failed to pull updates."
     fi
 else
-    display_message "No updates available."
+    display_message "No updates available!"
 fi
 
 # Start the .NET application
