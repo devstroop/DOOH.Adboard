@@ -9,33 +9,16 @@ display_message() {
 install_dependencies() {
     display_message "Installing dependencies..."
     sudo apt-get update && sudo apt-get upgrade -y
-    sudo apt-get install -y \
-        git \
-        vlc \
-        libvlc-dev
-        # libgl1-mesa-dev \
-        # libgles2-mesa-dev \
-        # libegl1-mesa-dev \
-        # libdrm-dev \
-        # libgbm-dev \
-        # ttf-mscorefonts-installer \
-        # fontconfig \
-        # libsystemd-dev \
-        # libinput-dev \
-        # libudev-dev \
-        # libxkbcommon-dev
+    sudo apt-get install -y git vlc libvlc-dev
 }
 
 # Function to install .NET
 install_dotnet() {
     display_message "Installing .NET..."
-    # Perform installation
     curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --version latest --verbose
-    # Set environment variables
     echo 'export DOTNET_ROOT=$HOME/.dotnet' >> ~/.bashrc
     echo 'export PATH=$PATH:$HOME/.dotnet' >> ~/.bashrc
     source ~/.bashrc
-    # Review installed SDKs
     dotnet --list-sdks
 }
 
@@ -57,40 +40,30 @@ configure_system() {
     sudo raspi-config nonint do_camera 0
 }
 
-# Function to pull repository in home directory
-pull_repository() {
-    display_message "Pulling repository..."
-    git clone https://github.com/devstroop/DOOH.Adboard.git ~/DOOH.Adboard
-    git config pull.rebase true
-}
-
-# Function to create the start script
-create_start_script() {
-    cat <<EOF | sudo tee /home/admin/start_dooh_adboard.sh > /dev/null
-#!/bin/bash
-# Navigate to the application directory
-cd /home/admin/DOOH.Adboard
-# Add the directory to Git's safe directories
-git config --global --add safe.directory /home/admin/DOOH.Adboard
-# Pull the latest code from the repository
-git pull
-# Start the .NET application
-/home/admin/.dotnet/dotnet /home/admin/DOOH.Adboard/net8.0/DOOH.Adboard.dll
-EOF
-    sudo chmod +x /home/admin/start_dooh_adboard.sh
+# Function to clone the repository
+clone_repository() {
+    display_message "Cloning repository..."
+    [ -d /home/admin/DOOH.Adboard ] && rm -rf /home/admin/DOOH.Adboard
+    git clone https://github.com/devstroop/DOOH.Adboard.git /home/admin/DOOH.Adboard
+    git -C /home/admin/DOOH.Adboard config pull.rebase true
 }
 
 # Function to set up services
 setup_services() {
     display_message "Setting up services..."
+    sudo systemctl stop "dooh.adboard.service" 2>/dev/null || true
+    sudo systemctl disable "dooh.adboard.service" 2>/dev/null || true
+    sudo chmod +x /home/admin/DOOH.Adboard/startup.sh
     cat <<EOF | sudo tee "/etc/systemd/system/dooh.adboard.service" > /dev/null
 [Unit]
 Description=DOOH Adboard Service
+
 [Service]
 Environment="DISPLAY=:0"
 ExecStartPre=/bin/sleep 10
-ExecStart=/bin/bash /home/admin/start_dooh_adboard.sh
+ExecStart=/bin/bash /home/admin/DOOH.Adboard/startup.sh
 Restart=always
+
 [Install]
 WantedBy=multi-user.target
 EOF
@@ -99,13 +72,12 @@ EOF
     sudo systemctl start "dooh.adboard.service"
 }
 
-# Main script
+# Main script execution
 install_dependencies
 install_dotnet
 install_debugger
 configure_system
-pull_repository
-create_start_script
+clone_repository
 setup_services
 
 # Final message
