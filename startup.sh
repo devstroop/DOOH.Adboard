@@ -30,3 +30,4 @@ fi
 # Start the .NET application
 display_message "Starting application..."
 /home/admin/.dotnet/dotnet /home/admin/DOOH.Adboard/net8.0/DOOH.Adboard.dll
+
