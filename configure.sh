@@ -38,6 +38,9 @@ configure_system() {
     sudo raspi-config nonint do_boot_splash 0
     sudo raspi-config nonint do_overscan 1
     sudo raspi-config nonint do_camera 0
+    
+    echo 'export XDG_RUNTIME_DIR=/tmp/.dotnet' >> ~/.bashrc
+    source ~/.bashrc
 }
 
 # Function to clone the repository
