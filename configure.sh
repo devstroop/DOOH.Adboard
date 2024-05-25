@@ -88,6 +88,9 @@ setup_zram() {
     else
         echo "Failed to update SIZE in $FILE"
     fi
+
+    sudo systemctl enable zramswap.service
+    sudo systemctl start zramswap.service
 }
 
 
