@@ -9,7 +9,7 @@ display_message() {
 install_dependencies() {
     display_message "Installing dependencies..."
     sudo apt-get update && sudo apt-get upgrade -y
-    sudo apt-get install -y git vlc libvlc-dev
+    sudo apt-get install -y git vlc libvlc-dev zram-tools
 }
 
 # Function to install .NET
@@ -32,7 +32,7 @@ install_debugger() {
 configure_system() {
     display_message "Configuring system..."
     sudo usermod -a -G input $USER
-    sudo raspi-config nonint do_boot_behaviour B1
+    sudo raspi-config nonint do_boot_behaviour B2
     sudo timedatectl set-timezone "Asia/Kolkata"
     sudo raspi-config nonint do_memory_split 48
     sudo raspi-config nonint do_boot_splash 0
@@ -75,6 +75,22 @@ EOF
     sudo systemctl start "dooh.adboard.service"
 }
 
+setup_zram() {
+    NEW_SIZE=512
+    FILE="/etc/default/zramswap"
+
+    # Use sed to update the SIZE parameter in the file
+    sudo sed -i "s/^#*SIZE=.*/SIZE=$NEW_SIZE/" $FILE
+
+    # Check if the sed command was successful
+    if [ $? -eq 0 ]; then
+        echo "SIZE updated to $NEW_SIZE MiB in $FILE"
+    else
+        echo "Failed to update SIZE in $FILE"
+    fi
+}
+
+
 # Main script execution
 install_dependencies
 install_dotnet
@@ -82,6 +98,7 @@ install_debugger
 configure_system
 clone_repository
 setup_services
+setup_zram
 
 # Final message
 display_message "Installed Successfully! Rebooting..."
