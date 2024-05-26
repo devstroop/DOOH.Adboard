@@ -76,7 +76,7 @@ EOF
 }
 
 setup_zram() {
-    NEW_SIZE=512
+    NEW_SIZE=256
     FILE="/etc/default/zramswap"
 
     # Use sed to update the SIZE parameter in the file
