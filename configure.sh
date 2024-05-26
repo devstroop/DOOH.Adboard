@@ -10,6 +10,10 @@ install_dependencies() {
     display_message "Installing dependencies..."
     sudo apt-get update && sudo apt-get upgrade -y
     sudo apt-get install -y git vlc libvlc-dev zram-tools
+    if [ $? -ne 0 ]; then
+        display_message "Failed to install dependencies!"
+        exit 1
+    fi
 }
 
 # Function to install .NET
@@ -41,6 +45,10 @@ configure_system() {
 
     echo 'export XDG_RUNTIME_DIR=/tmp/.dotnet' >> ~/.bashrc
     source ~/.bashrc
+
+    # Install and configure cron for time synchronization
+    sudo apt-get install -y cron
+    sudo timedatectl set-ntp true
 }
 
 # Function to clone the repository
@@ -64,8 +72,9 @@ Description=DOOH Adboard Service
 [Service]
 Environment="DISPLAY=:0"
 ExecStartPre=/bin/sleep 10
-ExecStart=/bin/bash /home/admin/DOOH.Adboard/startup.sh
-Restart=always
+ExecStart=/bin/bash /home/admin/DOOH.Adboard/startup.sh >> /home/admin/DOOH.Adboard/service.log 2>&1
+Restart=on-failure
+RestartSec=10s
 
 [Install]
 WantedBy=multi-user.target
@@ -73,6 +82,23 @@ EOF
     sudo systemctl daemon-reload
     sudo systemctl enable "dooh.adboard.service"
     sudo systemctl start "dooh.adboard.service"
+
+    
+    # Set up log rotation
+    sudo tee /etc/logrotate.d/dooh-adboard <<EOF
+/home/admin/DOOH.Adboard/service.log {
+    daily
+    rotate 7
+    compress
+    missingok
+    notifempty
+    create 0640 admin admin
+    sharedscripts
+    postrotate
+        systemctl reload dooh.adboard.service > /dev/null
+    endscript
+}
+EOF
 }
 
 setup_zram() {
